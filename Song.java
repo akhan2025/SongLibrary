@@ -1,3 +1,5 @@
+//Ali Khan and Owen Morris
+
 package songlib.app;
 
 public class Song {
@@ -26,8 +28,6 @@ public class Song {
 	public Song(String song, String artist, int year) {
 		this(song, artist, null, year);
 	}
-	
-	
 	
 	public String getSong() {
 		return song;
