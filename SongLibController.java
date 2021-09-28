@@ -6,12 +6,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Optional;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import songlib.app.Song;
@@ -94,7 +96,7 @@ public class SongLibController {
 		
 		listView.getSelectionModel().selectedIndexProperty().addListener(
 				(obs, oldVal, newVal) -> 
-				showSong(mainStage));
+				showSong());
 	}
 	
 	
@@ -104,13 +106,16 @@ public class SongLibController {
 		for ( int j=0; j < songinfo.size()-1; j++ )
 	    {
 	      int min = j;
-	      for ( int k=j+1; k < songinfo.size(); k++ )
-	        if ( songinfo.get(k).getSong().toLowerCase().compareTo( songinfo.get(min).getSong().toLowerCase() ) < 0 ) min = k;  
-
+	      for ( int k=j+1; k < songinfo.size(); k++ ) {
+	        if ( songinfo.get(k).getSong().toLowerCase().compareTo( songinfo.get(min).getSong().toLowerCase() ) < 0 ) {
+	        	min = k;  
+	        }
+	      }
 	      Song temp = songinfo.get(j);
 	      songinfo.set(j, songinfo.get(min));
 	      songinfo.set(min, temp);
 	    }
+	      artistSort();
 		
 		ArrayList<String> tempList = new ArrayList<String>();
 		for(int i = 0; i < songinfo.size();i++) {
@@ -120,13 +125,36 @@ public class SongLibController {
 		System.out.println("updating list");
 		listView.setItems(songList);
 		System.out.println("Sorted");
-		
 	}
+		
+	
+	public void artistSort() {
+		System.out.println("sorting artists");
+		for ( int j=0; j < songinfo.size()-1; j++ )
+	    {
+	      int min = j;
+	      for ( int k=j+1; k < songinfo.size(); k++ ) {
+	        if ( songinfo.get(k).getSong().toLowerCase().compareTo( songinfo.get(min).getSong().toLowerCase() ) == 0 ) {
+	        	if(songinfo.get(k).getArtist().toLowerCase().compareTo(songinfo.get(min).getArtist().toLowerCase()) < 0) {
+	        		min=k;
+	        	}
+	        }
+	    }
+	      Song temp = songinfo.get(j);
+	      songinfo.set(j, songinfo.get(min));
+	      songinfo.set(min, temp);
+		}
+		System.out.println("sorted artists");
+	}
+	
 	
 	public boolean addSong(ActionEvent e) throws IOException {
 		Button b = (Button)e.getSource();
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if(b == addSong) {
+			if(actionWarning() == false) {
+				return false;
+			}
 			System.out.println("Adding");
 			String song = enterSong.getText().trim();
 			String artist = enterArtist.getText().trim();
@@ -200,12 +228,18 @@ public class SongLibController {
 	public boolean editSong(ActionEvent e) throws IOException {
 		Button b = (Button)e.getSource();
 		if(b == editSong) {
+			if(actionWarning() == false) {
+				showSong();
+				return false;
+			}
 			System.out.println("Editing");
 			int index = listView.getSelectionModel().getSelectedIndex();
 			String song = showSong.getText();
 			String artist = showArtist.getText();
 			String album = showAlbum.getText();
 			String temp_year = showYear.getText();
+			ArrayList<Song> tempList = new ArrayList<Song>(songinfo);
+			tempList.remove(index);
 			int year = -1;
 			if(temp_year != null){
 				try {
@@ -222,6 +256,12 @@ public class SongLibController {
 				return false;
 			}
 			else {
+				
+				for(int i = 0; i < tempList.size();i++) {
+					if(tempList.get(i).getSong().equals(song.strip()) && tempList.get(i).getArtist().equals(artist.strip())) {
+						duplicateSongError();
+						return false;
+					}}
 				song = song.strip();
 				artist = artist.strip();
 				album = album.strip();
@@ -265,6 +305,9 @@ public class SongLibController {
 	public boolean deleteSong(ActionEvent e) throws IOException {
 		Button b = (Button)e.getSource();
 		if(b == deleteSong) {
+			if(actionWarning() == false) {
+				return false;
+			}
 			System.out.println("Deleting Song");
 			if(listView.getItems().size() > 0) {
 			int index = listView.getSelectionModel().getSelectedIndex();
@@ -290,7 +333,7 @@ public class SongLibController {
 		return true;
 	}
 	
-	public void showSong(Stage mainStage) {
+	public void showSong() {
 		System.out.println("Showing");
 		int index = listView.getSelectionModel().getSelectedIndex();
 		if(index>= 0) {
@@ -353,6 +396,28 @@ public class SongLibController {
 		alert.setTitle("Nothing to Delete");
 		alert.setContentText("You are trying to delete from an empty library. Please add songs before trying to delete");
 		alert.show();
+	}
+	
+	public boolean actionWarning() {
+		Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle("Warning");
+        alert.setHeaderText("Would You Like To Save Your Console Output?");
+        alert.setContentText("Please choose an option.");
+
+        ButtonType yesButton = new ButtonType("Yes");
+        ButtonType noButton = new ButtonType("No");
+
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.get() == yesButton)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
 	}
 }
 
