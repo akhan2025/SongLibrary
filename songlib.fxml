@@ -1,1 +1,36 @@
-whatever
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+fx:controller="songlib.view.SongLibController">
+   <children>
+      <ListView fx:id="listView" layoutX="10.0" layoutY="35.0" prefHeight="356.0" prefWidth="273.0" />
+      <Button fx:id="addSong" layoutX="411.0" layoutY="360.0" mnemonicParsing="false" text="Add Song" onAction="#addSong"/>
+      <Button fx:id="editSong" layoutX="341.0" layoutY="187.0" mnemonicParsing="false" text="Edit Song" onAction="#editSong"/>
+      <Button fx:id="deleteSong" layoutX="482.0" layoutY="187.0" mnemonicParsing="false" text="Delete Song" onAction="#deleteSong"/>
+      <Text fx:id="selectedSongTitle" layoutX="406.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Selected Song" />
+      <Text fx:id="newSongTitle" layoutX="418.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" text="New Song" />
+      <Line fx:id="horizontalLine" endX="153.0" layoutX="446.0" layoutY="225.0" startX="-153.0" />
+      <Text fx:id="myLibraryTitle" layoutX="118.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="My Library" />
+      <Line fx:id="verticalLine" endX="-10.5" endY="294.0" layoutX="304.0" layoutY="105.0" startX="-10.5" startY="-104.0" />
+      <Text fx:id="songTitle" layoutX="317.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Song:" wrappingWidth="31.38916015625" />
+      <Text fx:id="artistTitle" layoutX="465.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Artist:" wrappingWidth="45.38916015625" />
+      <Text fx:id="albumTitle" layoutX="318.0" layoutY="129.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Album:" wrappingWidth="45.38916015625" />
+      <Text fx:id="yearTitle" layoutX="465.0" layoutY="129.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Year:" wrappingWidth="45.38916015625" />
+      <TextField fx:id="showSong" layoutX="317.0" layoutY="74.0" prefHeight="26.0" prefWidth="118.0" />
+      <TextField fx:id="showArtist" layoutX="465.0" layoutY="74.0" prefHeight="26.0" prefWidth="118.0" />
+      <TextField fx:id="showAlbum" layoutX="317.0" layoutY="144.0" prefHeight="26.0" prefWidth="118.0" />
+      <TextField fx:id="showYear" layoutX="465.0" layoutY="144.0" prefHeight="26.0" prefWidth="118.0" />
+      <TextField fx:id="enterSong" layoutX="311.0" layoutY="270.0" prefHeight="26.0" prefWidth="118.0" promptText="Song:" />
+      <TextField fx:id="enterArtist" layoutX="457.0" layoutY="270.0" prefHeight="26.0" prefWidth="118.0" promptText="Artist:" />
+      <TextField fx:id="enterAlbum" layoutX="311.0" layoutY="316.0" prefHeight="26.0" prefWidth="118.0" promptText="Album (Optional):" />
+      <TextField fx:id="enterYear" layoutX="457.0" layoutY="316.0" prefHeight="26.0" prefWidth="118.0" promptText="Year (Optional):" />
+   </children>
+</AnchorPane>
