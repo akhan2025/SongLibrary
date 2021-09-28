@@ -1,4 +1,4 @@
-//Ali Khan
+//Ali Khan and Owen Morris
 
 package songlib.view;
 
@@ -48,6 +48,9 @@ public class SongLibController {
 		
 		
 		while ((line = br.readLine()) != null) {
+			if(line.isEmpty()) {
+				break;
+			}
 			String[] lines = line.split("  ");
 			if(lines.length == 2) {
 				Song temp = new Song(lines[0], lines[1]);
@@ -79,19 +82,19 @@ public class SongLibController {
 		ObservableList<String> songList = FXCollections.observableArrayList(tempList);
 		
 		listView.setItems(songList);
-		
-		alphabetSort();
-		
-		listView.getSelectionModel().select(0);
-		String song = songinfo.get(0).getSong();
-		showSong.setText(song);
-		showArtist.setText(songinfo.get(0).getArtist());
-		showAlbum.setText(songinfo.get(0).getAlbum());
-		if(songinfo.get(0).getYear() > 0) {
-			showYear.setText(Integer.toString(songinfo.get(0).getYear()));
-		}
-		else {
-			showYear.setText(null);
+		if(songList.size() > 0) {
+			alphabetSort();
+			listView.getSelectionModel().select(0);
+			String song = songinfo.get(0).getSong();
+			showSong.setText(song);
+			showArtist.setText(songinfo.get(0).getArtist());
+			showAlbum.setText(songinfo.get(0).getAlbum());
+			if(songinfo.get(0).getYear() > 0) {
+				showYear.setText(Integer.toString(songinfo.get(0).getYear()));
+			}
+			else {
+				showYear.setText(null);
+			}
 		}
 		
 		listView.getSelectionModel().selectedIndexProperty().addListener(
@@ -228,88 +231,96 @@ public class SongLibController {
 	public boolean editSong(ActionEvent e) throws IOException {
 		Button b = (Button)e.getSource();
 		if(b == editSong) {
-			if(actionWarning() == false) {
-				showSong();
-				return false;
-			}
-			System.out.println("Editing");
-			int index = listView.getSelectionModel().getSelectedIndex();
-			String song = showSong.getText();
-			String artist = showArtist.getText();
-			String album = showAlbum.getText();
-			String temp_year = showYear.getText();
-			ArrayList<Song> tempList = new ArrayList<Song>(songinfo);
-			tempList.remove(index);
-			int year = -1;
-			if(temp_year != null){
-				try {
-					year = Integer.parseInt(temp_year);
-				}
-				catch(NumberFormatException n) {
-					incorrectInfoError();
+			if(listView.getItems().size() > 0) {
+				
+				if(actionWarning() == false) {
+					showSong();
 					return false;
 				}
-			}
-			
-			if( song.isEmpty() || artist.isEmpty()) {
-				missingInfoError();
-				return false;
-			}
-			else {
-				
-				for(int i = 0; i < tempList.size();i++) {
-					if(tempList.get(i).getSong().equals(song.strip()) && tempList.get(i).getArtist().equals(artist.strip())) {
-						duplicateSongError();
+				System.out.println("Editing");
+				int index = listView.getSelectionModel().getSelectedIndex();
+				String song = showSong.getText();
+				String artist = showArtist.getText();
+				String album = showAlbum.getText();
+				String temp_year = showYear.getText();
+				ArrayList<Song> tempList = new ArrayList<Song>(songinfo);
+				tempList.remove(index);
+				int year = -1;
+				if(temp_year != null){
+					try {
+						year = Integer.parseInt(temp_year);
+					}
+					catch(NumberFormatException n) {
+						incorrectInfoError();
 						return false;
-					}}
-				song = song.strip();
-				artist = artist.strip();
-				album = album.strip();
-				if(album == null && year < 0) {
-					Song temp = new Song(song, artist);
-					songinfo.set(index, temp);
-					updateCSV();
+					}
 				}
-				else if(album != null && year < 0) {
-					Song temp = new Song(song, artist, album);
-					songinfo.set(index, temp);
-					updateCSV();
-				}
-				else if(album == null && year > 0) {
-					Song temp = new Song(song, artist, year);
-					songinfo.set(index, temp);
-					updateCSV();
+				
+				if( song.isEmpty() || artist.isEmpty()) {
+					missingInfoError();
+					return false;
 				}
 				else {
-					Song temp = new Song(song, artist, album, year);
-					songinfo.set(index, temp);
-					updateCSV();
+					
+					for(int i = 0; i < tempList.size();i++) {
+						if(tempList.get(i).getSong().equals(song.strip()) && tempList.get(i).getArtist().equals(artist.strip())) {
+							duplicateSongError();
+							return false;
+						}}
+					song = song.strip();
+					artist = artist.strip();
+					album = album.strip();
+					if(album == null && year < 0) {
+						Song temp = new Song(song, artist);
+						songinfo.set(index, temp);
+						updateCSV();
+					}
+					else if(album != null && year < 0) {
+						Song temp = new Song(song, artist, album);
+						songinfo.set(index, temp);
+						updateCSV();
+					}
+					else if(album == null && year > 0) {
+						Song temp = new Song(song, artist, year);
+						songinfo.set(index, temp);
+						updateCSV();
+					}
+					else {
+						Song temp = new Song(song, artist, album, year);
+						songinfo.set(index, temp);
+						updateCSV();
+					}
+					
 				}
-				
-			}
-			alphabetSort();
-			System.out.println("new index for old song");
-			for(int i = 0; i < songinfo.size();i++) {
-				if(songinfo.get(i).getSong().equals(song) && songinfo.get(i).getArtist().equals(artist)) {
-					index = i;
-					break;
+				alphabetSort();
+				System.out.println("new index for old song");
+				for(int i = 0; i < songinfo.size();i++) {
+					if(songinfo.get(i).getSong().equals(song) && songinfo.get(i).getArtist().equals(artist)) {
+						index = i;
+						break;
+					}
 				}
+				listView.getSelectionModel().select(index);
+				System.out.println("Edited");
+				return true;
 			}
-			listView.getSelectionModel().select(index);
-			System.out.println("Edited");
+			
+			else {
+				nothingToEdit();
+				return false;
 			}
-		
-		return true;
+			}
+		return false;
 	}
 	
 	public boolean deleteSong(ActionEvent e) throws IOException {
 		Button b = (Button)e.getSource();
 		if(b == deleteSong) {
-			if(actionWarning() == false) {
-				return false;
-			}
 			System.out.println("Deleting Song");
 			if(listView.getItems().size() > 0) {
+				if(actionWarning() == false) {
+					return false;
+				}
 			int index = listView.getSelectionModel().getSelectedIndex();
 			
 			showSong.clear();
@@ -398,6 +409,12 @@ public class SongLibController {
 		alert.show();
 	}
 	
+	public void nothingToEdit() {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Nothing to Edit");
+		alert.setContentText("You are trying to Edit from an empty library. Please add songs before trying to Edit");
+		alert.show();
+	}
 	public boolean actionWarning() {
 		Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle("Warning");
